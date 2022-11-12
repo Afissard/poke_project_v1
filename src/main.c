@@ -8,10 +8,16 @@ YT playlist to learn how to program with GBDK 2020 :
 https://www.youtube.com/playlist?list=PLeEj4c2zF7PaFv5MPYhNAkBGrkx4iPGJo
 
 */
+// libs :
+#include <gb/gb.h>
+#include <stdio.h>
 
-#include<gb/gb.h>
-#include<stdio.h>
+// game assets :
+#include "..\asset\sprite_1.c"
 
 void main(){
-    printf("Hello Gamer!");
+    set_sprite_data(0,2, sprite_1); // add to sprite memory the 2 tile of sprite_1
+    set_sprite_tile(0,0);           // 1st sprite load from the 1st tile
+    move_sprite(0, 88, 78);         // move the 1st sprite to the coord x=88 & y=78
+    SHOW_SPRITES;                   // update the sprites layer ...
 }
