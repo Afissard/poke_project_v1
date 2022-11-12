@@ -13,11 +13,24 @@ https://www.youtube.com/playlist?list=PLeEj4c2zF7PaFv5MPYhNAkBGrkx4iPGJo
 #include <stdio.h>
 
 // game assets :
-#include "..\asset\sprite_1.c"
+#include "..\asset\sprite_1.c"  // a demo sprite
 
 void main(){
+    UINT8 currentSpriteIndex = 0;   // unsigned int of 8 byte because of speed and memory optimisation
     set_sprite_data(0,2, sprite_1); // add to sprite memory the 2 tile of sprite_1
     set_sprite_tile(0,0);           // 1st sprite load from the 1st tile
     move_sprite(0, 88, 78);         // move the 1st sprite to the coord x=88 & y=78
     SHOW_SPRITES;                   // update the sprites layer ...
+
+    while(1){   // game loop
+        if(currentSpriteIndex == 0){
+            currentSpriteIndex = 1;
+        }
+        else{
+            currentSpriteIndex = 0;
+        }
+        set_sprite_tile(0, currentSpriteIndex);
+
+        delay(1000); // TODO : FIND AN NON BLOCKING WAIT FUNCTION
+    }
 }
