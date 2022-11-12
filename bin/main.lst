@@ -77,55 +77,77 @@
                                      77 ;.\src\main.c:26: if(currentSpriteIndex == 0){
       000022 79               [ 4]   78 	ld	a, c
       000023 B7               [ 4]   79 	or	a, a
-                                     80 ;.\src\main.c:27: currentSpriteIndex = 1;
-                                     81 ;.\src\main.c:30: currentSpriteIndex = 0;
-      000024 0E 01            [ 8]   82 	ld	c, #0x01
-      000026 28 02            [12]   83 	jr	Z, 00103$
-      000028 0E 00            [ 8]   84 	ld	c, #0x00
-      00002A                         85 00103$:
-                                     86 ;C:/gbdk/include/gb/gb.h:1602: shadow_OAM[nb].tile=tile;
-      00002A 21r02r00         [12]   87 	ld	hl, #(_shadow_OAM + 2)
-      00002D 71               [ 8]   88 	ld	(hl), c
-                                     89 ;.\src\main.c:34: delay(1000); // TODO : FIND AN NON BLOCKING WAIT FUNCTION
-      00002E C5               [16]   90 	push	bc
-      00002F 11 E8 03         [12]   91 	ld	de, #0x03e8
-      000032 CDr00r00         [24]   92 	call	_delay
-      000035 C1               [12]   93 	pop	bc
-                                     94 ;.\src\main.c:36: }
-      000036 18 EA            [12]   95 	jr	00105$
-                                     96 	.area _CODE
-                                     97 	.area _INITIALIZER
-      000000                         98 __xinit__sprite_1:
-      000000 7E                      99 	.db #0x7e	; 126
-      000001 7E                     100 	.db #0x7e	; 126
-      000002 BD                     101 	.db #0xbd	; 189
-      000003 C3                     102 	.db #0xc3	; 195
-      000004 C3                     103 	.db #0xc3	; 195
-      000005 FF                     104 	.db #0xff	; 255
-      000006 FF                     105 	.db #0xff	; 255
-      000007 BD                     106 	.db #0xbd	; 189
-      000008 DB                     107 	.db #0xdb	; 219
-      000009 A5                     108 	.db #0xa5	; 165
-      00000A FF                     109 	.db #0xff	; 255
-      00000B A5                     110 	.db #0xa5	; 165
-      00000C 66                     111 	.db #0x66	; 102	'f'
-      00000D 5A                     112 	.db #0x5a	; 90	'Z'
-      00000E 3C                     113 	.db #0x3c	; 60
-      00000F 3C                     114 	.db #0x3c	; 60
-      000010 7E                     115 	.db #0x7e	; 126
-      000011 7E                     116 	.db #0x7e	; 126
-      000012 89                     117 	.db #0x89	; 137
-      000013 F7                     118 	.db #0xf7	; 247
-      000014 C3                     119 	.db #0xc3	; 195
-      000015 BD                     120 	.db #0xbd	; 189
-      000016 BD                     121 	.db #0xbd	; 189
-      000017 FF                     122 	.db #0xff	; 255
-      000018 FF                     123 	.db #0xff	; 255
-      000019 C3                     124 	.db #0xc3	; 195
-      00001A FF                     125 	.db #0xff	; 255
-      00001B A5                     126 	.db #0xa5	; 165
-      00001C 7E                     127 	.db #0x7e	; 126
-      00001D 42                     128 	.db #0x42	; 66	'B'
-      00001E 3C                     129 	.db #0x3c	; 60
-      00001F 3C                     130 	.db #0x3c	; 60
-                                    131 	.area _CABS (ABS)
+      000024 20 0E            [12]   80 	jr	NZ, 00102$
+                                     81 ;.\src\main.c:27: currentSpriteIndex = 1;
+      000026 0E 01            [ 8]   82 	ld	c, #0x01
+                                     83 ;C:/gbdk/include/gb/gb.h:1691: OAM_item_t * itm = &shadow_OAM[nb];
+      000028 11r00r00         [12]   84 	ld	de, #_shadow_OAM
+                                     85 ;C:/gbdk/include/gb/gb.h:1692: itm->y+=y, itm->x+=x;
+      00002B 1A               [ 8]   86 	ld	a, (de)
+      00002C 12               [ 8]   87 	ld	(de), a
+      00002D 13               [ 8]   88 	inc	de
+      00002E 1A               [ 8]   89 	ld	a, (de)
+      00002F C6 0A            [ 8]   90 	add	a, #0x0a
+      000031 12               [ 8]   91 	ld	(de), a
+                                     92 ;.\src\main.c:28: scroll_sprite(0, 10, 0);    // move the 1st sprite of 10 pixels
+      000032 18 0C            [12]   93 	jr	00103$
+      000034                         94 00102$:
+                                     95 ;.\src\main.c:31: currentSpriteIndex = 0;
+      000034 0E 00            [ 8]   96 	ld	c, #0x00
+                                     97 ;C:/gbdk/include/gb/gb.h:1691: OAM_item_t * itm = &shadow_OAM[nb];
+      000036 11r00r00         [12]   98 	ld	de, #_shadow_OAM+0
+                                     99 ;C:/gbdk/include/gb/gb.h:1692: itm->y+=y, itm->x+=x;
+      000039 1A               [ 8]  100 	ld	a, (de)
+      00003A 12               [ 8]  101 	ld	(de), a
+      00003B 13               [ 8]  102 	inc	de
+      00003C 1A               [ 8]  103 	ld	a, (de)
+      00003D C6 F6            [ 8]  104 	add	a, #0xf6
+      00003F 12               [ 8]  105 	ld	(de), a
+                                    106 ;.\src\main.c:32: scroll_sprite(0, -10, 0);    // move the 1st sprite of 10 pixels
+      000040                        107 00103$:
+                                    108 ;C:/gbdk/include/gb/gb.h:1602: shadow_OAM[nb].tile=tile;
+      000040 21r02r00         [12]  109 	ld	hl, #(_shadow_OAM + 2)
+      000043 71               [ 8]  110 	ld	(hl), c
+                                    111 ;.\src\main.c:37: delay(1000); // TODO : FIND AN NON BLOCKING WAIT FUNCTION
+      000044 C5               [16]  112 	push	bc
+      000045 11 E8 03         [12]  113 	ld	de, #0x03e8
+      000048 CDr00r00         [24]  114 	call	_delay
+      00004B C1               [12]  115 	pop	bc
+                                    116 ;.\src\main.c:39: }
+      00004C 18 D4            [12]  117 	jr	00105$
+                                    118 	.area _CODE
+                                    119 	.area _INITIALIZER
+      000000                        120 __xinit__sprite_1:
+      000000 7E                     121 	.db #0x7e	; 126
+      000001 7E                     122 	.db #0x7e	; 126
+      000002 BD                     123 	.db #0xbd	; 189
+      000003 C3                     124 	.db #0xc3	; 195
+      000004 C3                     125 	.db #0xc3	; 195
+      000005 FF                     126 	.db #0xff	; 255
+      000006 FF                     127 	.db #0xff	; 255
+      000007 BD                     128 	.db #0xbd	; 189
+      000008 DB                     129 	.db #0xdb	; 219
+      000009 A5                     130 	.db #0xa5	; 165
+      00000A FF                     131 	.db #0xff	; 255
+      00000B A5                     132 	.db #0xa5	; 165
+      00000C 66                     133 	.db #0x66	; 102	'f'
+      00000D 5A                     134 	.db #0x5a	; 90	'Z'
+      00000E 3C                     135 	.db #0x3c	; 60
+      00000F 3C                     136 	.db #0x3c	; 60
+      000010 7E                     137 	.db #0x7e	; 126
+      000011 7E                     138 	.db #0x7e	; 126
+      000012 89                     139 	.db #0x89	; 137
+      000013 F7                     140 	.db #0xf7	; 247
+      000014 C3                     141 	.db #0xc3	; 195
+      000015 BD                     142 	.db #0xbd	; 189
+      000016 BD                     143 	.db #0xbd	; 189
+      000017 FF                     144 	.db #0xff	; 255
+      000018 FF                     145 	.db #0xff	; 255
+      000019 C3                     146 	.db #0xc3	; 195
+      00001A FF                     147 	.db #0xff	; 255
+      00001B A5                     148 	.db #0xa5	; 165
+      00001C 7E                     149 	.db #0x7e	; 126
+      00001D 42                     150 	.db #0x42	; 66	'B'
+      00001E 3C                     151 	.db #0x3c	; 60
+      00001F 3C                     152 	.db #0x3c	; 60
+                                    153 	.area _CABS (ABS)

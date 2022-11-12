@@ -25,11 +25,14 @@ void main(){
     while(1){   // game loop
         if(currentSpriteIndex == 0){
             currentSpriteIndex = 1;
+            scroll_sprite(0, 10, 0);    // move the 1st sprite of 10 pixels
         }
         else{
             currentSpriteIndex = 0;
+            scroll_sprite(0, -10, 0);    // move the 1st sprite of 10 pixels
         }
         set_sprite_tile(0, currentSpriteIndex);
+        
 
         delay(1000); // TODO : FIND AN NON BLOCKING WAIT FUNCTION
     }

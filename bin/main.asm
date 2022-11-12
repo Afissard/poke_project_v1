@@ -77,21 +77,43 @@ _main::
 ;.\src\main.c:26: if(currentSpriteIndex == 0){
 	ld	a, c
 	or	a, a
+	jr	NZ, 00102$
 ;.\src\main.c:27: currentSpriteIndex = 1;
-;.\src\main.c:30: currentSpriteIndex = 0;
 	ld	c, #0x01
-	jr	Z, 00103$
+;C:/gbdk/include/gb/gb.h:1691: OAM_item_t * itm = &shadow_OAM[nb];
+	ld	de, #_shadow_OAM
+;C:/gbdk/include/gb/gb.h:1692: itm->y+=y, itm->x+=x;
+	ld	a, (de)
+	ld	(de), a
+	inc	de
+	ld	a, (de)
+	add	a, #0x0a
+	ld	(de), a
+;.\src\main.c:28: scroll_sprite(0, 10, 0);    // move the 1st sprite of 10 pixels
+	jr	00103$
+00102$:
+;.\src\main.c:31: currentSpriteIndex = 0;
 	ld	c, #0x00
+;C:/gbdk/include/gb/gb.h:1691: OAM_item_t * itm = &shadow_OAM[nb];
+	ld	de, #_shadow_OAM+0
+;C:/gbdk/include/gb/gb.h:1692: itm->y+=y, itm->x+=x;
+	ld	a, (de)
+	ld	(de), a
+	inc	de
+	ld	a, (de)
+	add	a, #0xf6
+	ld	(de), a
+;.\src\main.c:32: scroll_sprite(0, -10, 0);    // move the 1st sprite of 10 pixels
 00103$:
 ;C:/gbdk/include/gb/gb.h:1602: shadow_OAM[nb].tile=tile;
 	ld	hl, #(_shadow_OAM + 2)
 	ld	(hl), c
-;.\src\main.c:34: delay(1000); // TODO : FIND AN NON BLOCKING WAIT FUNCTION
+;.\src\main.c:37: delay(1000); // TODO : FIND AN NON BLOCKING WAIT FUNCTION
 	push	bc
 	ld	de, #0x03e8
 	call	_delay
 	pop	bc
-;.\src\main.c:36: }
+;.\src\main.c:39: }
 	jr	00105$
 	.area _CODE
 	.area _INITIALIZER
