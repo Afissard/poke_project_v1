@@ -50,7 +50,7 @@
                                      50 ; Function main
                                      51 ; ---------------------------------
       000000                         52 _main::
-                                     53 ;.\src\main.c:19: UINT8 currentSpriteIndex = 0;   // unsigned int of 8 byte because of speed and memory optimisation
+                                     53 ;.\src\main.c:19: uint8_t currentSpriteIndex = 0;   // unsigned int of 8 byte because of speed and memory optimisation
       000000 0E 00            [ 8]   54 	ld	c, #0x00
                                      55 ;.\src\main.c:20: set_sprite_data(0,2, sprite_1); // add to sprite memory the 2 tile of sprite_1
       000002 11r00r00         [12]   56 	ld	de, #_sprite_1
