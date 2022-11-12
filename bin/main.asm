@@ -9,6 +9,7 @@
 ; Public variables in this module
 ;--------------------------------------------------------
 	.globl _main
+	.globl _demo_sprite
 	.globl _set_sprite_data
 	.globl _delay
 	.globl _sprite_1
@@ -45,14 +46,56 @@ _sprite_1::
 ; code
 ;--------------------------------------------------------
 	.area _CODE
-;.\src\main.c:18: void main(){
+;.\src\main.c:18: int demo_sprite(uint8_t currentSpriteIndex){
+;	---------------------------------
+; Function demo_sprite
+; ---------------------------------
+_demo_sprite::
+;.\src\main.c:19: if(currentSpriteIndex == 0){
+	or	a, a
+	jr	NZ, 00102$
+;.\src\main.c:20: currentSpriteIndex = 1;
+	ld	c, #0x01
+;C:/gbdk/include/gb/gb.h:1691: OAM_item_t * itm = &shadow_OAM[nb];
+	ld	de, #_shadow_OAM+0
+;C:/gbdk/include/gb/gb.h:1692: itm->y+=y, itm->x+=x;
+	ld	a, (de)
+	ld	(de), a
+	inc	de
+	ld	a, (de)
+	add	a, #0x0a
+	ld	(de), a
+;.\src\main.c:21: scroll_sprite(0, 10, 0);    // move the 1st sprite of 10 pixels
+	jr	00103$
+00102$:
+;.\src\main.c:24: currentSpriteIndex = 0;
+	ld	c, #0x00
+;C:/gbdk/include/gb/gb.h:1691: OAM_item_t * itm = &shadow_OAM[nb];
+	ld	de, #_shadow_OAM+0
+;C:/gbdk/include/gb/gb.h:1692: itm->y+=y, itm->x+=x;
+	ld	a, (de)
+	ld	(de), a
+	inc	de
+	ld	a, (de)
+	add	a, #0xf6
+	ld	(de), a
+;.\src\main.c:25: scroll_sprite(0, -10, 0);    // move the 1st sprite of 10 pixels
+00103$:
+;C:/gbdk/include/gb/gb.h:1602: shadow_OAM[nb].tile=tile;
+	ld	hl, #(_shadow_OAM + 2)
+	ld	(hl), c
+;.\src\main.c:28: return currentSpriteIndex;
+	ld	b, #0x00
+;.\src\main.c:29: }
+	ret
+;.\src\main.c:31: void main(){
 ;	---------------------------------
 ; Function main
 ; ---------------------------------
 _main::
-;.\src\main.c:19: uint8_t currentSpriteIndex = 0;   // unsigned int of 8 byte because of speed and memory optimisation
+;.\src\main.c:32: uint8_t currentSpriteIndex = 0;     // unsigned int of 8 byte because of speed and memory optimisation
 	ld	c, #0x00
-;.\src\main.c:20: set_sprite_data(0,2, sprite_1); // add to sprite memory the 2 tile of sprite_1
+;.\src\main.c:33: set_sprite_data(0,2, sprite_1);     // add to sprite memory the 2 tile of sprite_1
 	ld	de, #_sprite_1
 	push	de
 	ld	hl, #0x200
@@ -68,53 +111,22 @@ _main::
 	ld	a, #0x4e
 	ld	(hl+), a
 	ld	(hl), #0x58
-;.\src\main.c:23: SHOW_SPRITES;                   // update the sprites layer ...
+;.\src\main.c:36: SHOW_SPRITES;                       // update the sprites layer ...
 	ldh	a, (_LCDC_REG + 0)
 	or	a, #0x02
 	ldh	(_LCDC_REG + 0), a
-;.\src\main.c:25: while(1){   // game loop
-00105$:
-;.\src\main.c:26: if(currentSpriteIndex == 0){
-	ld	a, c
-	or	a, a
-	jr	NZ, 00102$
-;.\src\main.c:27: currentSpriteIndex = 1;
-	ld	c, #0x01
-;C:/gbdk/include/gb/gb.h:1691: OAM_item_t * itm = &shadow_OAM[nb];
-	ld	de, #_shadow_OAM
-;C:/gbdk/include/gb/gb.h:1692: itm->y+=y, itm->x+=x;
-	ld	a, (de)
-	ld	(de), a
-	inc	de
-	ld	a, (de)
-	add	a, #0x0a
-	ld	(de), a
-;.\src\main.c:28: scroll_sprite(0, 10, 0);    // move the 1st sprite of 10 pixels
-	jr	00103$
+;.\src\main.c:38: while(1){   // game loop
 00102$:
-;.\src\main.c:31: currentSpriteIndex = 0;
-	ld	c, #0x00
-;C:/gbdk/include/gb/gb.h:1691: OAM_item_t * itm = &shadow_OAM[nb];
-	ld	de, #_shadow_OAM+0
-;C:/gbdk/include/gb/gb.h:1692: itm->y+=y, itm->x+=x;
-	ld	a, (de)
-	ld	(de), a
-	inc	de
-	ld	a, (de)
-	add	a, #0xf6
-	ld	(de), a
-;.\src\main.c:32: scroll_sprite(0, -10, 0);    // move the 1st sprite of 10 pixels
-00103$:
-;C:/gbdk/include/gb/gb.h:1602: shadow_OAM[nb].tile=tile;
-	ld	hl, #(_shadow_OAM + 2)
-	ld	(hl), c
-;.\src\main.c:37: delay(1000); // TODO : FIND AN NON BLOCKING WAIT FUNCTION
+;.\src\main.c:39: currentSpriteIndex = demo_sprite(currentSpriteIndex);
+	ld	a, c
+	call	_demo_sprite
+;.\src\main.c:41: delay(1000); // TODO : FIND AN NON BLOCKING WAIT FUNCTION
 	push	bc
 	ld	de, #0x03e8
 	call	_delay
 	pop	bc
-;.\src\main.c:39: }
-	jr	00105$
+;.\src\main.c:43: }
+	jr	00102$
 	.area _CODE
 	.area _INITIALIZER
 __xinit__sprite_1:
