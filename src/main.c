@@ -15,7 +15,7 @@ https://www.youtube.com/playlist?list=PLeEj4c2zF7PaFv5MPYhNAkBGrkx4iPGJo
 // game assets :
 #include "..\asset\sprite_1.c"  // a demo sprite
 
-int demo_sprite(uint8_t currentSpriteIndex){
+uint8_t demo_sprite(uint8_t currentSpriteIndex){
     if(currentSpriteIndex == 0){
         currentSpriteIndex = 1;
         scroll_sprite(0, 10, 0);    // move the 1st sprite of 10 pixels

@@ -11,7 +11,7 @@ Symbol Table
   7 __xinit__sprite_1                                              000000 R
     _delay                                                         ****** GX
   0 _demo_sprite                                                   000000 GR
-  0 _main                                                          000024 GR
+  0 _main                                                          000023 GR
     _set_sprite_data                                               ****** GX
     _shadow_OAM                                                    ****** GX
   2 _sprite_1                                                      000000 GR

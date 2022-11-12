@@ -76,7 +76,7 @@ _CODE                  00000200    00000054 =          84. bytes (REL,CON)
 
         Value  Global            Value  Global            Value  Global    
         -----  ------            -----  ------            -----  ------    
-     00000200  _demo_spr |    00000224  _main    
+     00000200  _demo_spr |    00000223  _main    
 ASxxxx Linker V03.00 + NoICE + sdld,  page 4.
 Hexadecimal  [32-Bits]
 

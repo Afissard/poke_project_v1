@@ -46,7 +46,7 @@
                                      46 ; code
                                      47 ;--------------------------------------------------------
                                      48 	.area _CODE
-                                     49 ;.\src\main.c:18: int demo_sprite(uint8_t currentSpriteIndex){
+                                     49 ;.\src\main.c:18: uint8_t demo_sprite(uint8_t currentSpriteIndex){
                                      50 ;	---------------------------------
                                      51 ; Function demo_sprite
                                      52 ; ---------------------------------
@@ -85,81 +85,82 @@
       00001D 21r02r00         [12]   85 	ld	hl, #(_shadow_OAM + 2)
       000020 71               [ 8]   86 	ld	(hl), c
                                      87 ;.\src\main.c:28: return currentSpriteIndex;
-      000021 06 00            [ 8]   88 	ld	b, #0x00
+      000021 79               [ 4]   88 	ld	a, c
                                      89 ;.\src\main.c:29: }
-      000023 C9               [16]   90 	ret
+      000022 C9               [16]   90 	ret
                                      91 ;.\src\main.c:31: void main(){
                                      92 ;	---------------------------------
                                      93 ; Function main
                                      94 ; ---------------------------------
-      000024                         95 _main::
+      000023                         95 _main::
                                      96 ;.\src\main.c:32: uint8_t currentSpriteIndex = 0;     // unsigned int of 8 byte because of speed and memory optimisation
-      000024 0E 00            [ 8]   97 	ld	c, #0x00
+      000023 0E 00            [ 8]   97 	ld	c, #0x00
                                      98 ;.\src\main.c:33: set_sprite_data(0,2, sprite_1);     // add to sprite memory the 2 tile of sprite_1
-      000026 11r00r00         [12]   99 	ld	de, #_sprite_1
-      000029 D5               [16]  100 	push	de
-      00002A 21 00 02         [12]  101 	ld	hl, #0x200
-      00002D E5               [16]  102 	push	hl
-      00002E CDr00r00         [24]  103 	call	_set_sprite_data
-      000031 E8 04            [16]  104 	add	sp, #4
+      000025 11r00r00         [12]   99 	ld	de, #_sprite_1
+      000028 D5               [16]  100 	push	de
+      000029 21 00 02         [12]  101 	ld	hl, #0x200
+      00002C E5               [16]  102 	push	hl
+      00002D CDr00r00         [24]  103 	call	_set_sprite_data
+      000030 E8 04            [16]  104 	add	sp, #4
                                     105 ;C:/gbdk/include/gb/gb.h:1602: shadow_OAM[nb].tile=tile;
-      000033 21r02r00         [12]  106 	ld	hl, #(_shadow_OAM + 2)
-      000036 36 00            [12]  107 	ld	(hl), #0x00
+      000032 21r02r00         [12]  106 	ld	hl, #(_shadow_OAM + 2)
+      000035 36 00            [12]  107 	ld	(hl), #0x00
                                     108 ;C:/gbdk/include/gb/gb.h:1675: OAM_item_t * itm = &shadow_OAM[nb];
-      000038 21r00r00         [12]  109 	ld	hl, #_shadow_OAM
+      000037 21r00r00         [12]  109 	ld	hl, #_shadow_OAM
                                     110 ;C:/gbdk/include/gb/gb.h:1676: itm->y=y, itm->x=x;
-      00003B 3E 4E            [ 8]  111 	ld	a, #0x4e
-      00003D 22               [ 8]  112 	ld	(hl+), a
-      00003E 36 58            [12]  113 	ld	(hl), #0x58
+      00003A 3E 4E            [ 8]  111 	ld	a, #0x4e
+      00003C 22               [ 8]  112 	ld	(hl+), a
+      00003D 36 58            [12]  113 	ld	(hl), #0x58
                                     114 ;.\src\main.c:36: SHOW_SPRITES;                       // update the sprites layer ...
-      000040 F0r00            [12]  115 	ldh	a, (_LCDC_REG + 0)
-      000042 F6 02            [ 8]  116 	or	a, #0x02
-      000044 E0r00            [12]  117 	ldh	(_LCDC_REG + 0), a
+      00003F F0r00            [12]  115 	ldh	a, (_LCDC_REG + 0)
+      000041 F6 02            [ 8]  116 	or	a, #0x02
+      000043 E0r00            [12]  117 	ldh	(_LCDC_REG + 0), a
                                     118 ;.\src\main.c:38: while(1){   // game loop
-      000046                        119 00102$:
+      000045                        119 00102$:
                                     120 ;.\src\main.c:39: currentSpriteIndex = demo_sprite(currentSpriteIndex);
-      000046 79               [ 4]  121 	ld	a, c
-      000047 CDr00r00         [24]  122 	call	_demo_sprite
-                                    123 ;.\src\main.c:41: delay(1000); // TODO : FIND AN NON BLOCKING WAIT FUNCTION
-      00004A C5               [16]  124 	push	bc
-      00004B 11 E8 03         [12]  125 	ld	de, #0x03e8
-      00004E CDr00r00         [24]  126 	call	_delay
-      000051 C1               [12]  127 	pop	bc
-                                    128 ;.\src\main.c:43: }
-      000052 18 F2            [12]  129 	jr	00102$
-                                    130 	.area _CODE
-                                    131 	.area _INITIALIZER
-      000000                        132 __xinit__sprite_1:
-      000000 7E                     133 	.db #0x7e	; 126
-      000001 7E                     134 	.db #0x7e	; 126
-      000002 BD                     135 	.db #0xbd	; 189
-      000003 C3                     136 	.db #0xc3	; 195
-      000004 C3                     137 	.db #0xc3	; 195
-      000005 FF                     138 	.db #0xff	; 255
-      000006 FF                     139 	.db #0xff	; 255
-      000007 BD                     140 	.db #0xbd	; 189
-      000008 DB                     141 	.db #0xdb	; 219
-      000009 A5                     142 	.db #0xa5	; 165
-      00000A FF                     143 	.db #0xff	; 255
-      00000B A5                     144 	.db #0xa5	; 165
-      00000C 66                     145 	.db #0x66	; 102	'f'
-      00000D 5A                     146 	.db #0x5a	; 90	'Z'
-      00000E 3C                     147 	.db #0x3c	; 60
-      00000F 3C                     148 	.db #0x3c	; 60
-      000010 7E                     149 	.db #0x7e	; 126
-      000011 7E                     150 	.db #0x7e	; 126
-      000012 89                     151 	.db #0x89	; 137
-      000013 F7                     152 	.db #0xf7	; 247
-      000014 C3                     153 	.db #0xc3	; 195
-      000015 BD                     154 	.db #0xbd	; 189
-      000016 BD                     155 	.db #0xbd	; 189
-      000017 FF                     156 	.db #0xff	; 255
-      000018 FF                     157 	.db #0xff	; 255
-      000019 C3                     158 	.db #0xc3	; 195
-      00001A FF                     159 	.db #0xff	; 255
-      00001B A5                     160 	.db #0xa5	; 165
-      00001C 7E                     161 	.db #0x7e	; 126
-      00001D 42                     162 	.db #0x42	; 66	'B'
-      00001E 3C                     163 	.db #0x3c	; 60
-      00001F 3C                     164 	.db #0x3c	; 60
-                                    165 	.area _CABS (ABS)
+      000045 79               [ 4]  121 	ld	a, c
+      000046 CDr00r00         [24]  122 	call	_demo_sprite
+      000049 4F               [ 4]  123 	ld	c, a
+                                    124 ;.\src\main.c:41: delay(1000); // TODO : FIND AN NON BLOCKING WAIT FUNCTION
+      00004A C5               [16]  125 	push	bc
+      00004B 11 E8 03         [12]  126 	ld	de, #0x03e8
+      00004E CDr00r00         [24]  127 	call	_delay
+      000051 C1               [12]  128 	pop	bc
+                                    129 ;.\src\main.c:43: }
+      000052 18 F1            [12]  130 	jr	00102$
+                                    131 	.area _CODE
+                                    132 	.area _INITIALIZER
+      000000                        133 __xinit__sprite_1:
+      000000 7E                     134 	.db #0x7e	; 126
+      000001 7E                     135 	.db #0x7e	; 126
+      000002 BD                     136 	.db #0xbd	; 189
+      000003 C3                     137 	.db #0xc3	; 195
+      000004 C3                     138 	.db #0xc3	; 195
+      000005 FF                     139 	.db #0xff	; 255
+      000006 FF                     140 	.db #0xff	; 255
+      000007 BD                     141 	.db #0xbd	; 189
+      000008 DB                     142 	.db #0xdb	; 219
+      000009 A5                     143 	.db #0xa5	; 165
+      00000A FF                     144 	.db #0xff	; 255
+      00000B A5                     145 	.db #0xa5	; 165
+      00000C 66                     146 	.db #0x66	; 102	'f'
+      00000D 5A                     147 	.db #0x5a	; 90	'Z'
+      00000E 3C                     148 	.db #0x3c	; 60
+      00000F 3C                     149 	.db #0x3c	; 60
+      000010 7E                     150 	.db #0x7e	; 126
+      000011 7E                     151 	.db #0x7e	; 126
+      000012 89                     152 	.db #0x89	; 137
+      000013 F7                     153 	.db #0xf7	; 247
+      000014 C3                     154 	.db #0xc3	; 195
+      000015 BD                     155 	.db #0xbd	; 189
+      000016 BD                     156 	.db #0xbd	; 189
+      000017 FF                     157 	.db #0xff	; 255
+      000018 FF                     158 	.db #0xff	; 255
+      000019 C3                     159 	.db #0xc3	; 195
+      00001A FF                     160 	.db #0xff	; 255
+      00001B A5                     161 	.db #0xa5	; 165
+      00001C 7E                     162 	.db #0x7e	; 126
+      00001D 42                     163 	.db #0x42	; 66	'B'
+      00001E 3C                     164 	.db #0x3c	; 60
+      00001F 3C                     165 	.db #0x3c	; 60
+                                    166 	.area _CABS (ABS)

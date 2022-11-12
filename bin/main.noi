@@ -151,7 +151,7 @@ DEF .refresh_OAM 0xFF80
 DEF __HRAM 0xFF80
 DEF _IE_REG 0xFFFF
 DEF _demo_sprite 0x200
-DEF _main 0x224
+DEF _main 0x223
 DEF .call_hl 0x20
 DEF .MemsetSmall 0x28
 DEF .MemcpySmall 0x30

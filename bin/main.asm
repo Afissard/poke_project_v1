@@ -46,7 +46,7 @@ _sprite_1::
 ; code
 ;--------------------------------------------------------
 	.area _CODE
-;.\src\main.c:18: int demo_sprite(uint8_t currentSpriteIndex){
+;.\src\main.c:18: uint8_t demo_sprite(uint8_t currentSpriteIndex){
 ;	---------------------------------
 ; Function demo_sprite
 ; ---------------------------------
@@ -85,7 +85,7 @@ _demo_sprite::
 	ld	hl, #(_shadow_OAM + 2)
 	ld	(hl), c
 ;.\src\main.c:28: return currentSpriteIndex;
-	ld	b, #0x00
+	ld	a, c
 ;.\src\main.c:29: }
 	ret
 ;.\src\main.c:31: void main(){
@@ -120,6 +120,7 @@ _main::
 ;.\src\main.c:39: currentSpriteIndex = demo_sprite(currentSpriteIndex);
 	ld	a, c
 	call	_demo_sprite
+	ld	c, a
 ;.\src\main.c:41: delay(1000); // TODO : FIND AN NON BLOCKING WAIT FUNCTION
 	push	bc
 	ld	de, #0x03e8
