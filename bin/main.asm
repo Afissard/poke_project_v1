@@ -9,6 +9,7 @@
 ; Public variables in this module
 ;--------------------------------------------------------
 	.globl _main
+	.globl _player_move
 	.globl _demo_sprite
 	.globl _set_sprite_data
 	.globl _joypad
@@ -47,15 +48,15 @@ _sprite_1::
 ; code
 ;--------------------------------------------------------
 	.area _CODE
-;.\src\main.c:18: uint8_t demo_sprite(uint8_t currentSpriteIndex){
+;.\src\main.c:19: uint8_t demo_sprite(uint8_t currentSpriteIndex){
 ;	---------------------------------
 ; Function demo_sprite
 ; ---------------------------------
 _demo_sprite::
-;.\src\main.c:19: if(currentSpriteIndex == 0){
+;.\src\main.c:20: if(currentSpriteIndex == 0){
 	or	a, a
 	jr	NZ, 00102$
-;.\src\main.c:20: currentSpriteIndex = 1;
+;.\src\main.c:21: currentSpriteIndex = 1;
 	ld	c, #0x01
 ;C:/gbdk/include/gb/gb.h:1691: OAM_item_t * itm = &shadow_OAM[nb];
 	ld	de, #_shadow_OAM+0
@@ -66,10 +67,10 @@ _demo_sprite::
 	ld	a, (de)
 	add	a, #0x0a
 	ld	(de), a
-;.\src\main.c:21: scroll_sprite(0, 10, 0);    // move the 1st sprite of 10 pixels
+;.\src\main.c:22: scroll_sprite(0, 10, 0);    // move the 1st sprite of 10 pixels
 	jr	00103$
 00102$:
-;.\src\main.c:24: currentSpriteIndex = 0;
+;.\src\main.c:25: currentSpriteIndex = 0;
 	ld	c, #0x00
 ;C:/gbdk/include/gb/gb.h:1691: OAM_item_t * itm = &shadow_OAM[nb];
 	ld	de, #_shadow_OAM+0
@@ -80,21 +81,84 @@ _demo_sprite::
 	ld	a, (de)
 	add	a, #0xf6
 	ld	(de), a
-;.\src\main.c:25: scroll_sprite(0, -10, 0);    // move the 1st sprite of 10 pixels
+;.\src\main.c:26: scroll_sprite(0, -10, 0);    // move the 1st sprite of 10 pixels
 00103$:
 ;C:/gbdk/include/gb/gb.h:1602: shadow_OAM[nb].tile=tile;
 	ld	hl, #(_shadow_OAM + 2)
 	ld	(hl), c
-;.\src\main.c:28: return currentSpriteIndex;
+;.\src\main.c:29: return currentSpriteIndex;
 	ld	a, c
-;.\src\main.c:29: }
+;.\src\main.c:30: }
 	ret
-;.\src\main.c:31: void main(){
+;.\src\main.c:32: void player_move(uint8_t keys){
+;	---------------------------------
+; Function player_move
+; ---------------------------------
+_player_move::
+	ld	c, a
+;.\src\main.c:40: if(keys & J_LEFT){              // LEFT button
+	bit	1, c
+	jr	Z, 00102$
+;C:/gbdk/include/gb/gb.h:1691: OAM_item_t * itm = &shadow_OAM[nb];
+	ld	de, #_shadow_OAM+0
+;C:/gbdk/include/gb/gb.h:1692: itm->y+=y, itm->x+=x;
+	ld	a, (de)
+	ld	(de), a
+	inc	de
+	ld	a, (de)
+	dec	a
+	ld	(de), a
+;.\src\main.c:41: scroll_sprite(0, -1, 0);
+00102$:
+;.\src\main.c:43: if(keys & J_RIGHT){             // RIGHT button
+	bit	0, c
+	jr	Z, 00104$
+;C:/gbdk/include/gb/gb.h:1691: OAM_item_t * itm = &shadow_OAM[nb];
+	ld	de, #_shadow_OAM+0
+;C:/gbdk/include/gb/gb.h:1692: itm->y+=y, itm->x+=x;
+	ld	a, (de)
+	ld	(de), a
+	inc	de
+	ld	a, (de)
+	inc	a
+	ld	(de), a
+;.\src\main.c:44: scroll_sprite(0, 1, 0);
+00104$:
+;.\src\main.c:46: if(keys & J_UP){                // UP button
+	bit	2, c
+	jr	Z, 00106$
+;C:/gbdk/include/gb/gb.h:1691: OAM_item_t * itm = &shadow_OAM[nb];
+	ld	de, #_shadow_OAM+0
+;C:/gbdk/include/gb/gb.h:1692: itm->y+=y, itm->x+=x;
+	ld	a, (de)
+	dec	a
+	ld	(de), a
+	inc	de
+	ld	a, (de)
+	ld	(de), a
+;.\src\main.c:47: scroll_sprite(0, 0, -1);
+00106$:
+;.\src\main.c:49: if(keys & J_DOWN){              // DOWN button
+	bit	3, c
+	ret	Z
+;C:/gbdk/include/gb/gb.h:1691: OAM_item_t * itm = &shadow_OAM[nb];
+	ld	bc, #_shadow_OAM+0
+;C:/gbdk/include/gb/gb.h:1692: itm->y+=y, itm->x+=x;
+	ld	a, (bc)
+	inc	a
+	ld	(bc), a
+	inc	bc
+	ld	a, (bc)
+	ld	(bc), a
+;.\src\main.c:50: scroll_sprite(0, 0, 1);
+;.\src\main.c:52: }
+	ret
+;.\src\main.c:54: void main(){
 ;	---------------------------------
 ; Function main
 ; ---------------------------------
 _main::
-;.\src\main.c:34: set_sprite_data(0,2, sprite_1);     // add to sprite memory the 2 tile of sprite_1
+;.\src\main.c:67: set_sprite_data(0,2, sprite_1);     // add to sprite memory the 2 tile of sprite_1
 	ld	de, #_sprite_1
 	push	de
 	ld	hl, #0x200
@@ -110,82 +174,21 @@ _main::
 	ld	a, #0x4e
 	ld	(hl+), a
 	ld	(hl), #0x58
-;.\src\main.c:37: SHOW_SPRITES;                       // show the sprites layer
+;.\src\main.c:70: SHOW_SPRITES;                       // show the sprites layer
 	ldh	a, (_LCDC_REG + 0)
 	or	a, #0x02
 	ldh	(_LCDC_REG + 0), a
-;.\src\main.c:46: while(1){   
-00107$:
-;.\src\main.c:49: switch(joypad()){
-	call	_joypad
-	ld	c, a
-	dec	a
-	jr	Z, 00102$
-	ld	a,c
-	cp	a,#0x02
-	jr	Z, 00101$
-	cp	a,#0x04
-	jr	Z, 00103$
-	sub	a, #0x08
-	jr	Z, 00104$
-	jr	00105$
-;.\src\main.c:55: case J_LEFT : scroll_sprite(0, -1, 0); break;
-00101$:
-;C:/gbdk/include/gb/gb.h:1691: OAM_item_t * itm = &shadow_OAM[nb];
-	ld	bc, #_shadow_OAM+0
-;C:/gbdk/include/gb/gb.h:1692: itm->y+=y, itm->x+=x;
-	ld	a, (bc)
-	ld	(bc), a
-	inc	bc
-	ld	a, (bc)
-	dec	a
-	ld	(bc), a
-;.\src\main.c:55: case J_LEFT : scroll_sprite(0, -1, 0); break;
-	jr	00105$
-;.\src\main.c:56: case J_RIGHT : scroll_sprite(0, 1, 0); break;
+;.\src\main.c:74: while(1){
 00102$:
-;C:/gbdk/include/gb/gb.h:1691: OAM_item_t * itm = &shadow_OAM[nb];
-	ld	bc, #_shadow_OAM
-;C:/gbdk/include/gb/gb.h:1692: itm->y+=y, itm->x+=x;
-	ld	a, (bc)
-	ld	(bc), a
-	inc	bc
-	ld	a, (bc)
-	inc	a
-	ld	(bc), a
-;.\src\main.c:56: case J_RIGHT : scroll_sprite(0, 1, 0); break;
-	jr	00105$
-;.\src\main.c:57: case J_UP : scroll_sprite(0, 0, -1); break;
-00103$:
-;C:/gbdk/include/gb/gb.h:1691: OAM_item_t * itm = &shadow_OAM[nb];
-	ld	bc, #_shadow_OAM
-;C:/gbdk/include/gb/gb.h:1692: itm->y+=y, itm->x+=x;
-	ld	a, (bc)
-	dec	a
-	ld	(bc), a
-	inc	bc
-	ld	a, (bc)
-	ld	(bc), a
-;.\src\main.c:57: case J_UP : scroll_sprite(0, 0, -1); break;
-	jr	00105$
-;.\src\main.c:58: case J_DOWN : scroll_sprite(0, 0, 1); break;
-00104$:
-;C:/gbdk/include/gb/gb.h:1691: OAM_item_t * itm = &shadow_OAM[nb];
-	ld	bc, #_shadow_OAM
-;C:/gbdk/include/gb/gb.h:1692: itm->y+=y, itm->x+=x;
-	ld	a, (bc)
-	inc	a
-	ld	(bc), a
-	inc	bc
-	ld	a, (bc)
-	ld	(bc), a
-;.\src\main.c:59: }
-00105$:
-;.\src\main.c:60: delay(10); // TODO : FIND AN NON BLOCKING WAIT FUNCTION
+;.\src\main.c:75: keys = joypad(); // the value is updated each time the loop restart
+	call	_joypad
+;.\src\main.c:78: player_move(keys);
+	call	_player_move
+;.\src\main.c:80: delay(10); // TODO : FIND AN NON BLOCKING WAIT FUNCTION
 	ld	de, #0x000a
 	call	_delay
-;.\src\main.c:62: }
-	jr	00107$
+;.\src\main.c:82: }
+	jr	00102$
 	.area _CODE
 	.area _INITIALIZER
 __xinit__sprite_1:

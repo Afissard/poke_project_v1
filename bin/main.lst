@@ -9,216 +9,219 @@
                                       9 ; Public variables in this module
                                      10 ;--------------------------------------------------------
                                      11 	.globl _main
-                                     12 	.globl _demo_sprite
-                                     13 	.globl _set_sprite_data
-                                     14 	.globl _joypad
-                                     15 	.globl _delay
-                                     16 	.globl _sprite_1
-                                     17 ;--------------------------------------------------------
-                                     18 ; special function registers
-                                     19 ;--------------------------------------------------------
+                                     12 	.globl _player_move
+                                     13 	.globl _demo_sprite
+                                     14 	.globl _set_sprite_data
+                                     15 	.globl _joypad
+                                     16 	.globl _delay
+                                     17 	.globl _sprite_1
+                                     18 ;--------------------------------------------------------
+                                     19 ; special function registers
                                      20 ;--------------------------------------------------------
-                                     21 ; ram data
-                                     22 ;--------------------------------------------------------
-                                     23 	.area _DATA
-                                     24 ;--------------------------------------------------------
-                                     25 ; ram data
-                                     26 ;--------------------------------------------------------
-                                     27 	.area _INITIALIZED
-      000000                         28 _sprite_1::
-      000000                         29 	.ds 32
-                                     30 ;--------------------------------------------------------
-                                     31 ; absolute external ram data
-                                     32 ;--------------------------------------------------------
-                                     33 	.area _DABS (ABS)
-                                     34 ;--------------------------------------------------------
-                                     35 ; global & static initialisations
-                                     36 ;--------------------------------------------------------
-                                     37 	.area _HOME
-                                     38 	.area _GSINIT
-                                     39 	.area _GSFINAL
-                                     40 	.area _GSINIT
-                                     41 ;--------------------------------------------------------
-                                     42 ; Home
-                                     43 ;--------------------------------------------------------
-                                     44 	.area _HOME
+                                     21 ;--------------------------------------------------------
+                                     22 ; ram data
+                                     23 ;--------------------------------------------------------
+                                     24 	.area _DATA
+                                     25 ;--------------------------------------------------------
+                                     26 ; ram data
+                                     27 ;--------------------------------------------------------
+                                     28 	.area _INITIALIZED
+      000000                         29 _sprite_1::
+      000000                         30 	.ds 32
+                                     31 ;--------------------------------------------------------
+                                     32 ; absolute external ram data
+                                     33 ;--------------------------------------------------------
+                                     34 	.area _DABS (ABS)
+                                     35 ;--------------------------------------------------------
+                                     36 ; global & static initialisations
+                                     37 ;--------------------------------------------------------
+                                     38 	.area _HOME
+                                     39 	.area _GSINIT
+                                     40 	.area _GSFINAL
+                                     41 	.area _GSINIT
+                                     42 ;--------------------------------------------------------
+                                     43 ; Home
+                                     44 ;--------------------------------------------------------
                                      45 	.area _HOME
-                                     46 ;--------------------------------------------------------
-                                     47 ; code
-                                     48 ;--------------------------------------------------------
-                                     49 	.area _CODE
-                                     50 ;.\src\main.c:18: uint8_t demo_sprite(uint8_t currentSpriteIndex){
-                                     51 ;	---------------------------------
-                                     52 ; Function demo_sprite
-                                     53 ; ---------------------------------
-      000000                         54 _demo_sprite::
-                                     55 ;.\src\main.c:19: if(currentSpriteIndex == 0){
-      000000 B7               [ 4]   56 	or	a, a
-      000001 20 0E            [12]   57 	jr	NZ, 00102$
-                                     58 ;.\src\main.c:20: currentSpriteIndex = 1;
-      000003 0E 01            [ 8]   59 	ld	c, #0x01
-                                     60 ;C:/gbdk/include/gb/gb.h:1691: OAM_item_t * itm = &shadow_OAM[nb];
-      000005 11r00r00         [12]   61 	ld	de, #_shadow_OAM+0
-                                     62 ;C:/gbdk/include/gb/gb.h:1692: itm->y+=y, itm->x+=x;
-      000008 1A               [ 8]   63 	ld	a, (de)
-      000009 12               [ 8]   64 	ld	(de), a
-      00000A 13               [ 8]   65 	inc	de
-      00000B 1A               [ 8]   66 	ld	a, (de)
-      00000C C6 0A            [ 8]   67 	add	a, #0x0a
-      00000E 12               [ 8]   68 	ld	(de), a
-                                     69 ;.\src\main.c:21: scroll_sprite(0, 10, 0);    // move the 1st sprite of 10 pixels
-      00000F 18 0C            [12]   70 	jr	00103$
-      000011                         71 00102$:
-                                     72 ;.\src\main.c:24: currentSpriteIndex = 0;
-      000011 0E 00            [ 8]   73 	ld	c, #0x00
-                                     74 ;C:/gbdk/include/gb/gb.h:1691: OAM_item_t * itm = &shadow_OAM[nb];
-      000013 11r00r00         [12]   75 	ld	de, #_shadow_OAM+0
-                                     76 ;C:/gbdk/include/gb/gb.h:1692: itm->y+=y, itm->x+=x;
-      000016 1A               [ 8]   77 	ld	a, (de)
-      000017 12               [ 8]   78 	ld	(de), a
-      000018 13               [ 8]   79 	inc	de
-      000019 1A               [ 8]   80 	ld	a, (de)
-      00001A C6 F6            [ 8]   81 	add	a, #0xf6
-      00001C 12               [ 8]   82 	ld	(de), a
-                                     83 ;.\src\main.c:25: scroll_sprite(0, -10, 0);    // move the 1st sprite of 10 pixels
-      00001D                         84 00103$:
-                                     85 ;C:/gbdk/include/gb/gb.h:1602: shadow_OAM[nb].tile=tile;
-      00001D 21r02r00         [12]   86 	ld	hl, #(_shadow_OAM + 2)
-      000020 71               [ 8]   87 	ld	(hl), c
-                                     88 ;.\src\main.c:28: return currentSpriteIndex;
-      000021 79               [ 4]   89 	ld	a, c
-                                     90 ;.\src\main.c:29: }
-      000022 C9               [16]   91 	ret
-                                     92 ;.\src\main.c:31: void main(){
-                                     93 ;	---------------------------------
-                                     94 ; Function main
-                                     95 ; ---------------------------------
-      000023                         96 _main::
-                                     97 ;.\src\main.c:34: set_sprite_data(0,2, sprite_1);     // add to sprite memory the 2 tile of sprite_1
-      000023 11r00r00         [12]   98 	ld	de, #_sprite_1
-      000026 D5               [16]   99 	push	de
-      000027 21 00 02         [12]  100 	ld	hl, #0x200
-      00002A E5               [16]  101 	push	hl
-      00002B CDr00r00         [24]  102 	call	_set_sprite_data
-      00002E E8 04            [16]  103 	add	sp, #4
-                                    104 ;C:/gbdk/include/gb/gb.h:1602: shadow_OAM[nb].tile=tile;
-      000030 21r02r00         [12]  105 	ld	hl, #(_shadow_OAM + 2)
-      000033 36 00            [12]  106 	ld	(hl), #0x00
-                                    107 ;C:/gbdk/include/gb/gb.h:1675: OAM_item_t * itm = &shadow_OAM[nb];
-      000035 21r00r00         [12]  108 	ld	hl, #_shadow_OAM
-                                    109 ;C:/gbdk/include/gb/gb.h:1676: itm->y=y, itm->x=x;
-      000038 3E 4E            [ 8]  110 	ld	a, #0x4e
-      00003A 22               [ 8]  111 	ld	(hl+), a
-      00003B 36 58            [12]  112 	ld	(hl), #0x58
-                                    113 ;.\src\main.c:37: SHOW_SPRITES;                       // show the sprites layer
-      00003D F0r00            [12]  114 	ldh	a, (_LCDC_REG + 0)
-      00003F F6 02            [ 8]  115 	or	a, #0x02
-      000041 E0r00            [12]  116 	ldh	(_LCDC_REG + 0), a
-                                    117 ;.\src\main.c:46: while(1){   
-      000043                        118 00107$:
-                                    119 ;.\src\main.c:49: switch(joypad()){
-      000043 CDr00r00         [24]  120 	call	_joypad
-      000046 4F               [ 4]  121 	ld	c, a
-      000047 3D               [ 4]  122 	dec	a
-      000048 28 1A            [12]  123 	jr	Z, 00102$
-      00004A 79               [ 4]  124 	ld	a,c
-      00004B FE 02            [ 8]  125 	cp	a,#0x02
-      00004D 28 0A            [12]  126 	jr	Z, 00101$
-      00004F FE 04            [ 8]  127 	cp	a,#0x04
-      000051 28 1C            [12]  128 	jr	Z, 00103$
-      000053 D6 08            [ 8]  129 	sub	a, #0x08
-      000055 28 23            [12]  130 	jr	Z, 00104$
-      000057 18 2A            [12]  131 	jr	00105$
-                                    132 ;.\src\main.c:55: case J_LEFT : scroll_sprite(0, -1, 0); break;
-      000059                        133 00101$:
-                                    134 ;C:/gbdk/include/gb/gb.h:1691: OAM_item_t * itm = &shadow_OAM[nb];
-      000059 01r00r00         [12]  135 	ld	bc, #_shadow_OAM+0
-                                    136 ;C:/gbdk/include/gb/gb.h:1692: itm->y+=y, itm->x+=x;
-      00005C 0A               [ 8]  137 	ld	a, (bc)
-      00005D 02               [ 8]  138 	ld	(bc), a
-      00005E 03               [ 8]  139 	inc	bc
-      00005F 0A               [ 8]  140 	ld	a, (bc)
-      000060 3D               [ 4]  141 	dec	a
-      000061 02               [ 8]  142 	ld	(bc), a
-                                    143 ;.\src\main.c:55: case J_LEFT : scroll_sprite(0, -1, 0); break;
-      000062 18 1F            [12]  144 	jr	00105$
-                                    145 ;.\src\main.c:56: case J_RIGHT : scroll_sprite(0, 1, 0); break;
-      000064                        146 00102$:
-                                    147 ;C:/gbdk/include/gb/gb.h:1691: OAM_item_t * itm = &shadow_OAM[nb];
-      000064 01r00r00         [12]  148 	ld	bc, #_shadow_OAM
-                                    149 ;C:/gbdk/include/gb/gb.h:1692: itm->y+=y, itm->x+=x;
-      000067 0A               [ 8]  150 	ld	a, (bc)
-      000068 02               [ 8]  151 	ld	(bc), a
-      000069 03               [ 8]  152 	inc	bc
-      00006A 0A               [ 8]  153 	ld	a, (bc)
-      00006B 3C               [ 4]  154 	inc	a
-      00006C 02               [ 8]  155 	ld	(bc), a
-                                    156 ;.\src\main.c:56: case J_RIGHT : scroll_sprite(0, 1, 0); break;
-      00006D 18 14            [12]  157 	jr	00105$
-                                    158 ;.\src\main.c:57: case J_UP : scroll_sprite(0, 0, -1); break;
-      00006F                        159 00103$:
-                                    160 ;C:/gbdk/include/gb/gb.h:1691: OAM_item_t * itm = &shadow_OAM[nb];
-      00006F 01r00r00         [12]  161 	ld	bc, #_shadow_OAM
-                                    162 ;C:/gbdk/include/gb/gb.h:1692: itm->y+=y, itm->x+=x;
-      000072 0A               [ 8]  163 	ld	a, (bc)
-      000073 3D               [ 4]  164 	dec	a
-      000074 02               [ 8]  165 	ld	(bc), a
-      000075 03               [ 8]  166 	inc	bc
-      000076 0A               [ 8]  167 	ld	a, (bc)
-      000077 02               [ 8]  168 	ld	(bc), a
-                                    169 ;.\src\main.c:57: case J_UP : scroll_sprite(0, 0, -1); break;
-      000078 18 09            [12]  170 	jr	00105$
-                                    171 ;.\src\main.c:58: case J_DOWN : scroll_sprite(0, 0, 1); break;
-      00007A                        172 00104$:
-                                    173 ;C:/gbdk/include/gb/gb.h:1691: OAM_item_t * itm = &shadow_OAM[nb];
-      00007A 01r00r00         [12]  174 	ld	bc, #_shadow_OAM
-                                    175 ;C:/gbdk/include/gb/gb.h:1692: itm->y+=y, itm->x+=x;
-      00007D 0A               [ 8]  176 	ld	a, (bc)
-      00007E 3C               [ 4]  177 	inc	a
-      00007F 02               [ 8]  178 	ld	(bc), a
-      000080 03               [ 8]  179 	inc	bc
-      000081 0A               [ 8]  180 	ld	a, (bc)
-      000082 02               [ 8]  181 	ld	(bc), a
-                                    182 ;.\src\main.c:59: }
-      000083                        183 00105$:
-                                    184 ;.\src\main.c:60: delay(10); // TODO : FIND AN NON BLOCKING WAIT FUNCTION
-      000083 11 0A 00         [12]  185 	ld	de, #0x000a
-      000086 CDr00r00         [24]  186 	call	_delay
-                                    187 ;.\src\main.c:62: }
-      000089 18 B8            [12]  188 	jr	00107$
-                                    189 	.area _CODE
-                                    190 	.area _INITIALIZER
-      000000                        191 __xinit__sprite_1:
-      000000 7E                     192 	.db #0x7e	; 126
-      000001 7E                     193 	.db #0x7e	; 126
-      000002 BD                     194 	.db #0xbd	; 189
-      000003 C3                     195 	.db #0xc3	; 195
-      000004 C3                     196 	.db #0xc3	; 195
-      000005 FF                     197 	.db #0xff	; 255
-      000006 FF                     198 	.db #0xff	; 255
-      000007 BD                     199 	.db #0xbd	; 189
-      000008 DB                     200 	.db #0xdb	; 219
-      000009 A5                     201 	.db #0xa5	; 165
-      00000A FF                     202 	.db #0xff	; 255
-      00000B A5                     203 	.db #0xa5	; 165
-      00000C 66                     204 	.db #0x66	; 102	'f'
-      00000D 5A                     205 	.db #0x5a	; 90	'Z'
-      00000E 3C                     206 	.db #0x3c	; 60
-      00000F 3C                     207 	.db #0x3c	; 60
-      000010 7E                     208 	.db #0x7e	; 126
-      000011 7E                     209 	.db #0x7e	; 126
-      000012 89                     210 	.db #0x89	; 137
-      000013 F7                     211 	.db #0xf7	; 247
-      000014 C3                     212 	.db #0xc3	; 195
-      000015 BD                     213 	.db #0xbd	; 189
-      000016 BD                     214 	.db #0xbd	; 189
-      000017 FF                     215 	.db #0xff	; 255
-      000018 FF                     216 	.db #0xff	; 255
-      000019 C3                     217 	.db #0xc3	; 195
-      00001A FF                     218 	.db #0xff	; 255
-      00001B A5                     219 	.db #0xa5	; 165
-      00001C 7E                     220 	.db #0x7e	; 126
-      00001D 42                     221 	.db #0x42	; 66	'B'
-      00001E 3C                     222 	.db #0x3c	; 60
-      00001F 3C                     223 	.db #0x3c	; 60
-                                    224 	.area _CABS (ABS)
+                                     46 	.area _HOME
+                                     47 ;--------------------------------------------------------
+                                     48 ; code
+                                     49 ;--------------------------------------------------------
+                                     50 	.area _CODE
+                                     51 ;.\src\main.c:19: uint8_t demo_sprite(uint8_t currentSpriteIndex){
+                                     52 ;	---------------------------------
+                                     53 ; Function demo_sprite
+                                     54 ; ---------------------------------
+      000000                         55 _demo_sprite::
+                                     56 ;.\src\main.c:20: if(currentSpriteIndex == 0){
+      000000 B7               [ 4]   57 	or	a, a
+      000001 20 0E            [12]   58 	jr	NZ, 00102$
+                                     59 ;.\src\main.c:21: currentSpriteIndex = 1;
+      000003 0E 01            [ 8]   60 	ld	c, #0x01
+                                     61 ;C:/gbdk/include/gb/gb.h:1691: OAM_item_t * itm = &shadow_OAM[nb];
+      000005 11r00r00         [12]   62 	ld	de, #_shadow_OAM+0
+                                     63 ;C:/gbdk/include/gb/gb.h:1692: itm->y+=y, itm->x+=x;
+      000008 1A               [ 8]   64 	ld	a, (de)
+      000009 12               [ 8]   65 	ld	(de), a
+      00000A 13               [ 8]   66 	inc	de
+      00000B 1A               [ 8]   67 	ld	a, (de)
+      00000C C6 0A            [ 8]   68 	add	a, #0x0a
+      00000E 12               [ 8]   69 	ld	(de), a
+                                     70 ;.\src\main.c:22: scroll_sprite(0, 10, 0);    // move the 1st sprite of 10 pixels
+      00000F 18 0C            [12]   71 	jr	00103$
+      000011                         72 00102$:
+                                     73 ;.\src\main.c:25: currentSpriteIndex = 0;
+      000011 0E 00            [ 8]   74 	ld	c, #0x00
+                                     75 ;C:/gbdk/include/gb/gb.h:1691: OAM_item_t * itm = &shadow_OAM[nb];
+      000013 11r00r00         [12]   76 	ld	de, #_shadow_OAM+0
+                                     77 ;C:/gbdk/include/gb/gb.h:1692: itm->y+=y, itm->x+=x;
+      000016 1A               [ 8]   78 	ld	a, (de)
+      000017 12               [ 8]   79 	ld	(de), a
+      000018 13               [ 8]   80 	inc	de
+      000019 1A               [ 8]   81 	ld	a, (de)
+      00001A C6 F6            [ 8]   82 	add	a, #0xf6
+      00001C 12               [ 8]   83 	ld	(de), a
+                                     84 ;.\src\main.c:26: scroll_sprite(0, -10, 0);    // move the 1st sprite of 10 pixels
+      00001D                         85 00103$:
+                                     86 ;C:/gbdk/include/gb/gb.h:1602: shadow_OAM[nb].tile=tile;
+      00001D 21r02r00         [12]   87 	ld	hl, #(_shadow_OAM + 2)
+      000020 71               [ 8]   88 	ld	(hl), c
+                                     89 ;.\src\main.c:29: return currentSpriteIndex;
+      000021 79               [ 4]   90 	ld	a, c
+                                     91 ;.\src\main.c:30: }
+      000022 C9               [16]   92 	ret
+                                     93 ;.\src\main.c:32: void player_move(uint8_t keys){
+                                     94 ;	---------------------------------
+                                     95 ; Function player_move
+                                     96 ; ---------------------------------
+      000023                         97 _player_move::
+      000023 4F               [ 4]   98 	ld	c, a
+                                     99 ;.\src\main.c:40: if(keys & J_LEFT){              // LEFT button
+      000024 CB 49            [ 8]  100 	bit	1, c
+      000026 28 09            [12]  101 	jr	Z, 00102$
+                                    102 ;C:/gbdk/include/gb/gb.h:1691: OAM_item_t * itm = &shadow_OAM[nb];
+      000028 11r00r00         [12]  103 	ld	de, #_shadow_OAM+0
+                                    104 ;C:/gbdk/include/gb/gb.h:1692: itm->y+=y, itm->x+=x;
+      00002B 1A               [ 8]  105 	ld	a, (de)
+      00002C 12               [ 8]  106 	ld	(de), a
+      00002D 13               [ 8]  107 	inc	de
+      00002E 1A               [ 8]  108 	ld	a, (de)
+      00002F 3D               [ 4]  109 	dec	a
+      000030 12               [ 8]  110 	ld	(de), a
+                                    111 ;.\src\main.c:41: scroll_sprite(0, -1, 0);
+      000031                        112 00102$:
+                                    113 ;.\src\main.c:43: if(keys & J_RIGHT){             // RIGHT button
+      000031 CB 41            [ 8]  114 	bit	0, c
+      000033 28 09            [12]  115 	jr	Z, 00104$
+                                    116 ;C:/gbdk/include/gb/gb.h:1691: OAM_item_t * itm = &shadow_OAM[nb];
+      000035 11r00r00         [12]  117 	ld	de, #_shadow_OAM+0
+                                    118 ;C:/gbdk/include/gb/gb.h:1692: itm->y+=y, itm->x+=x;
+      000038 1A               [ 8]  119 	ld	a, (de)
+      000039 12               [ 8]  120 	ld	(de), a
+      00003A 13               [ 8]  121 	inc	de
+      00003B 1A               [ 8]  122 	ld	a, (de)
+      00003C 3C               [ 4]  123 	inc	a
+      00003D 12               [ 8]  124 	ld	(de), a
+                                    125 ;.\src\main.c:44: scroll_sprite(0, 1, 0);
+      00003E                        126 00104$:
+                                    127 ;.\src\main.c:46: if(keys & J_UP){                // UP button
+      00003E CB 51            [ 8]  128 	bit	2, c
+      000040 28 09            [12]  129 	jr	Z, 00106$
+                                    130 ;C:/gbdk/include/gb/gb.h:1691: OAM_item_t * itm = &shadow_OAM[nb];
+      000042 11r00r00         [12]  131 	ld	de, #_shadow_OAM+0
+                                    132 ;C:/gbdk/include/gb/gb.h:1692: itm->y+=y, itm->x+=x;
+      000045 1A               [ 8]  133 	ld	a, (de)
+      000046 3D               [ 4]  134 	dec	a
+      000047 12               [ 8]  135 	ld	(de), a
+      000048 13               [ 8]  136 	inc	de
+      000049 1A               [ 8]  137 	ld	a, (de)
+      00004A 12               [ 8]  138 	ld	(de), a
+                                    139 ;.\src\main.c:47: scroll_sprite(0, 0, -1);
+      00004B                        140 00106$:
+                                    141 ;.\src\main.c:49: if(keys & J_DOWN){              // DOWN button
+      00004B CB 59            [ 8]  142 	bit	3, c
+      00004D C8               [20]  143 	ret	Z
+                                    144 ;C:/gbdk/include/gb/gb.h:1691: OAM_item_t * itm = &shadow_OAM[nb];
+      00004E 01r00r00         [12]  145 	ld	bc, #_shadow_OAM+0
+                                    146 ;C:/gbdk/include/gb/gb.h:1692: itm->y+=y, itm->x+=x;
+      000051 0A               [ 8]  147 	ld	a, (bc)
+      000052 3C               [ 4]  148 	inc	a
+      000053 02               [ 8]  149 	ld	(bc), a
+      000054 03               [ 8]  150 	inc	bc
+      000055 0A               [ 8]  151 	ld	a, (bc)
+      000056 02               [ 8]  152 	ld	(bc), a
+                                    153 ;.\src\main.c:50: scroll_sprite(0, 0, 1);
+                                    154 ;.\src\main.c:52: }
+      000057 C9               [16]  155 	ret
+                                    156 ;.\src\main.c:54: void main(){
+                                    157 ;	---------------------------------
+                                    158 ; Function main
+                                    159 ; ---------------------------------
+      000058                        160 _main::
+                                    161 ;.\src\main.c:67: set_sprite_data(0,2, sprite_1);     // add to sprite memory the 2 tile of sprite_1
+      000058 11r00r00         [12]  162 	ld	de, #_sprite_1
+      00005B D5               [16]  163 	push	de
+      00005C 21 00 02         [12]  164 	ld	hl, #0x200
+      00005F E5               [16]  165 	push	hl
+      000060 CDr00r00         [24]  166 	call	_set_sprite_data
+      000063 E8 04            [16]  167 	add	sp, #4
+                                    168 ;C:/gbdk/include/gb/gb.h:1602: shadow_OAM[nb].tile=tile;
+      000065 21r02r00         [12]  169 	ld	hl, #(_shadow_OAM + 2)
+      000068 36 00            [12]  170 	ld	(hl), #0x00
+                                    171 ;C:/gbdk/include/gb/gb.h:1675: OAM_item_t * itm = &shadow_OAM[nb];
+      00006A 21r00r00         [12]  172 	ld	hl, #_shadow_OAM
+                                    173 ;C:/gbdk/include/gb/gb.h:1676: itm->y=y, itm->x=x;
+      00006D 3E 4E            [ 8]  174 	ld	a, #0x4e
+      00006F 22               [ 8]  175 	ld	(hl+), a
+      000070 36 58            [12]  176 	ld	(hl), #0x58
+                                    177 ;.\src\main.c:70: SHOW_SPRITES;                       // show the sprites layer
+      000072 F0r00            [12]  178 	ldh	a, (_LCDC_REG + 0)
+      000074 F6 02            [ 8]  179 	or	a, #0x02
+      000076 E0r00            [12]  180 	ldh	(_LCDC_REG + 0), a
+                                    181 ;.\src\main.c:74: while(1){
+      000078                        182 00102$:
+                                    183 ;.\src\main.c:75: keys = joypad(); // the value is updated each time the loop restart
+      000078 CDr00r00         [24]  184 	call	_joypad
+                                    185 ;.\src\main.c:78: player_move(keys);
+      00007B CDr23r00         [24]  186 	call	_player_move
+                                    187 ;.\src\main.c:80: delay(10); // TODO : FIND AN NON BLOCKING WAIT FUNCTION
+      00007E 11 0A 00         [12]  188 	ld	de, #0x000a
+      000081 CDr00r00         [24]  189 	call	_delay
+                                    190 ;.\src\main.c:82: }
+      000084 18 F2            [12]  191 	jr	00102$
+                                    192 	.area _CODE
+                                    193 	.area _INITIALIZER
+      000000                        194 __xinit__sprite_1:
+      000000 7E                     195 	.db #0x7e	; 126
+      000001 7E                     196 	.db #0x7e	; 126
+      000002 BD                     197 	.db #0xbd	; 189
+      000003 C3                     198 	.db #0xc3	; 195
+      000004 C3                     199 	.db #0xc3	; 195
+      000005 FF                     200 	.db #0xff	; 255
+      000006 FF                     201 	.db #0xff	; 255
+      000007 BD                     202 	.db #0xbd	; 189
+      000008 DB                     203 	.db #0xdb	; 219
+      000009 A5                     204 	.db #0xa5	; 165
+      00000A FF                     205 	.db #0xff	; 255
+      00000B A5                     206 	.db #0xa5	; 165
+      00000C 66                     207 	.db #0x66	; 102	'f'
+      00000D 5A                     208 	.db #0x5a	; 90	'Z'
+      00000E 3C                     209 	.db #0x3c	; 60
+      00000F 3C                     210 	.db #0x3c	; 60
+      000010 7E                     211 	.db #0x7e	; 126
+      000011 7E                     212 	.db #0x7e	; 126
+      000012 89                     213 	.db #0x89	; 137
+      000013 F7                     214 	.db #0xf7	; 247
+      000014 C3                     215 	.db #0xc3	; 195
+      000015 BD                     216 	.db #0xbd	; 189
+      000016 BD                     217 	.db #0xbd	; 189
+      000017 FF                     218 	.db #0xff	; 255
+      000018 FF                     219 	.db #0xff	; 255
+      000019 C3                     220 	.db #0xc3	; 195
+      00001A FF                     221 	.db #0xff	; 255
+      00001B A5                     222 	.db #0xa5	; 165
+      00001C 7E                     223 	.db #0x7e	; 126
+      00001D 42                     224 	.db #0x42	; 66	'B'
+      00001E 3C                     225 	.db #0x3c	; 60
+      00001F 3C                     226 	.db #0x3c	; 60
+                                    227 	.area _CABS (ABS)

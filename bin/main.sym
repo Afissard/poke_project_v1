@@ -12,7 +12,8 @@ Symbol Table
     _delay                                                         ****** GX
   0 _demo_sprite                                                   000000 GR
     _joypad                                                        ****** GX
-  0 _main                                                          000023 GR
+  0 _main                                                          000058 GR
+  0 _player_move                                                   000023 GR
     _set_sprite_data                                               ****** GX
     _shadow_OAM                                                    ****** GX
   2 _sprite_1                                                      000000 GR
@@ -23,7 +24,7 @@ Hexadecimal [24-Bits]
 
 Area Table
 
-   0 _CODE                                      size     8B   flags    0
+   0 _CODE                                      size     86   flags    0
    1 _DATA                                      size      0   flags    0
    2 _INITIALIZED                               size     20   flags    0
    3 _DABS                                      size      0   flags    8
