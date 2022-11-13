@@ -11,6 +11,7 @@
 	.globl _main
 	.globl _demo_sprite
 	.globl _set_sprite_data
+	.globl _joypad
 	.globl _delay
 	.globl _sprite_1
 ;--------------------------------------------------------
@@ -93,9 +94,7 @@ _demo_sprite::
 ; Function main
 ; ---------------------------------
 _main::
-;.\src\main.c:32: uint8_t currentSpriteIndex = 0;     // unsigned int of 8 byte because of speed and memory optimisation
-	ld	c, #0x00
-;.\src\main.c:33: set_sprite_data(0,2, sprite_1);     // add to sprite memory the 2 tile of sprite_1
+;.\src\main.c:34: set_sprite_data(0,2, sprite_1);     // add to sprite memory the 2 tile of sprite_1
 	ld	de, #_sprite_1
 	push	de
 	ld	hl, #0x200
@@ -111,23 +110,82 @@ _main::
 	ld	a, #0x4e
 	ld	(hl+), a
 	ld	(hl), #0x58
-;.\src\main.c:36: SHOW_SPRITES;                       // update the sprites layer ...
+;.\src\main.c:37: SHOW_SPRITES;                       // show the sprites layer
 	ldh	a, (_LCDC_REG + 0)
 	or	a, #0x02
 	ldh	(_LCDC_REG + 0), a
-;.\src\main.c:38: while(1){   // game loop
-00102$:
-;.\src\main.c:39: currentSpriteIndex = demo_sprite(currentSpriteIndex);
-	ld	a, c
-	call	_demo_sprite
+;.\src\main.c:46: while(1){   
+00107$:
+;.\src\main.c:49: switch(joypad()){
+	call	_joypad
 	ld	c, a
-;.\src\main.c:41: delay(1000); // TODO : FIND AN NON BLOCKING WAIT FUNCTION
-	push	bc
-	ld	de, #0x03e8
+	dec	a
+	jr	Z, 00102$
+	ld	a,c
+	cp	a,#0x02
+	jr	Z, 00101$
+	cp	a,#0x04
+	jr	Z, 00103$
+	sub	a, #0x08
+	jr	Z, 00104$
+	jr	00105$
+;.\src\main.c:55: case J_LEFT : scroll_sprite(0, -1, 0); break;
+00101$:
+;C:/gbdk/include/gb/gb.h:1691: OAM_item_t * itm = &shadow_OAM[nb];
+	ld	bc, #_shadow_OAM+0
+;C:/gbdk/include/gb/gb.h:1692: itm->y+=y, itm->x+=x;
+	ld	a, (bc)
+	ld	(bc), a
+	inc	bc
+	ld	a, (bc)
+	dec	a
+	ld	(bc), a
+;.\src\main.c:55: case J_LEFT : scroll_sprite(0, -1, 0); break;
+	jr	00105$
+;.\src\main.c:56: case J_RIGHT : scroll_sprite(0, 1, 0); break;
+00102$:
+;C:/gbdk/include/gb/gb.h:1691: OAM_item_t * itm = &shadow_OAM[nb];
+	ld	bc, #_shadow_OAM
+;C:/gbdk/include/gb/gb.h:1692: itm->y+=y, itm->x+=x;
+	ld	a, (bc)
+	ld	(bc), a
+	inc	bc
+	ld	a, (bc)
+	inc	a
+	ld	(bc), a
+;.\src\main.c:56: case J_RIGHT : scroll_sprite(0, 1, 0); break;
+	jr	00105$
+;.\src\main.c:57: case J_UP : scroll_sprite(0, 0, -1); break;
+00103$:
+;C:/gbdk/include/gb/gb.h:1691: OAM_item_t * itm = &shadow_OAM[nb];
+	ld	bc, #_shadow_OAM
+;C:/gbdk/include/gb/gb.h:1692: itm->y+=y, itm->x+=x;
+	ld	a, (bc)
+	dec	a
+	ld	(bc), a
+	inc	bc
+	ld	a, (bc)
+	ld	(bc), a
+;.\src\main.c:57: case J_UP : scroll_sprite(0, 0, -1); break;
+	jr	00105$
+;.\src\main.c:58: case J_DOWN : scroll_sprite(0, 0, 1); break;
+00104$:
+;C:/gbdk/include/gb/gb.h:1691: OAM_item_t * itm = &shadow_OAM[nb];
+	ld	bc, #_shadow_OAM
+;C:/gbdk/include/gb/gb.h:1692: itm->y+=y, itm->x+=x;
+	ld	a, (bc)
+	inc	a
+	ld	(bc), a
+	inc	bc
+	ld	a, (bc)
+	ld	(bc), a
+;.\src\main.c:59: }
+00105$:
+;.\src\main.c:60: delay(10); // TODO : FIND AN NON BLOCKING WAIT FUNCTION
+	ld	de, #0x000a
 	call	_delay
-	pop	bc
-;.\src\main.c:43: }
-	jr	00102$
+;.\src\main.c:62: }
+	jr	00107$
 	.area _CODE
 	.area _INITIALIZER
 __xinit__sprite_1:

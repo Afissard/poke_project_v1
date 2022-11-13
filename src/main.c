@@ -29,15 +29,34 @@ uint8_t demo_sprite(uint8_t currentSpriteIndex){
 }
 
 void main(){
+    // Setup :
     uint8_t currentSpriteIndex = 0;     // unsigned int of 8 byte because of speed and memory optimisation
     set_sprite_data(0,2, sprite_1);     // add to sprite memory the 2 tile of sprite_1
     set_sprite_tile(0,0);               // 1st sprite load from the 1st tile
     move_sprite(0, 88, 78);             // move the 1st sprite to the coord x=88 & y=78
-    SHOW_SPRITES;                       // update the sprites layer ...
+    SHOW_SPRITES;                       // show the sprites layer
+    /*
+    There is three layer of rendering :
+    - screen layer (UI and text)
+    - sprite layer (sprites)
+    - background layer (backround)
+    */
 
-    while(1){   // game loop
-        currentSpriteIndex = demo_sprite(currentSpriteIndex);
+    // Game Loop :
+    while(1){   
+        //currentSpriteIndex = demo_sprite(currentSpriteIndex);
 
-        delay(1000); // TODO : FIND AN NON BLOCKING WAIT FUNCTION
+        switch(joypad()){
+            /*
+            The origin point of an orthonormal frame for computer is in the
+            top left of the screen and not in the botom left.
+            So for exemple to go up you have to do : y-up_value
+            */
+            case J_LEFT : scroll_sprite(0, -1, 0); break;
+            case J_RIGHT : scroll_sprite(0, 1, 0); break;
+            case J_UP : scroll_sprite(0, 0, -1); break;
+            case J_DOWN : scroll_sprite(0, 0, 1); break;
+        }
+        delay(10); // TODO : FIND AN NON BLOCKING WAIT FUNCTION
     }
 }
